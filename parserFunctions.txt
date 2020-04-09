@@ -1,0 +1,835 @@
+//        ArrayList<String> split = split(howling);
+//        System.out.println("Split: " + split);
+
+
+//        String str = howling;
+//        str = str.replaceFirst("\\(", "");
+//        String[] results = str.split("\\)")[0].split("\\(");
+//
+//        int l = results.length;
+//        for (int j = 0; j < l / 2; j++) {
+//            String temp = results[j];
+//            results[j] = results[l - j - 1];
+//            results[l - j - 1] = temp;
+//        }
+//
+//        for (String string : results) {
+//            System.out.println(string);
+//        }
+
+
+        String s = howling;
+        int n = s.length();
+        int end[] = new int[n];
+        boolean internalWords = false;
+        Stack<Integer> stack = new Stack<Integer>();
+        for(int i = 0 ; i < n ; i++){
+            if(s.charAt(i)=='('){
+                stack.push(i);
+            }else if(s.charAt(i)==')'){
+                int start = (Integer)stack.pop();
+                end[start] = i;
+            }else if(stack.isEmpty()){
+                System.out.print(s.charAt(i));
+            }
+        }
+        System.out.println();
+        for(int i = 0 ; i < n ; i++){
+            if(s.charAt(i)=='('){
+
+                for(int j = i ; j <= end[i]; j++){
+                    System.out.print(s.charAt(j));
+                }
+                System.out.println();
+            }
+        }
+
+
+
+
+//        int start = 0;
+//
+//        while (start<howling.length()) {
+//            if (howling.charAt(start) == '(') {
+//                ArrayList<Character> chars = new ArrayList<>();
+//                chars.add(howling.charAt(start));
+//                start++;
+//            }
+//            start++;
+//        }
+
+
+
+//        Stack<Character> howlingParsed = new Stack<>();
+//        Stack<Character> theoroms = new Stack<>();
+//        int start =0;
+//        while(start < howling.length()){
+//
+//            if(howling.charAt(start)=='*'){
+//                start++;
+//                while (howling.charAt(start)!='*') {
+//                    howlingParsed.push(howling.charAt(start));
+//                    System.out.println(howlingParsed);
+//                    start++;
+//                }
+//                howlingParsed.removeAllElements();
+//                System.out.println(howlingParsed);
+//
+//            }else if(howling.charAt(start)=='\''){
+//                System.out.println("Found start of expression");
+//                start++;
+//                while(howling.charAt(start)!=')'){
+//                    howlingParsed.push(howling.charAt(start));
+//                    start++;
+//                }
+//                howlingParsed.push(howling.charAt(start));
+//                //System.out.println(howlingParsed);
+//                ArrayList<Character> positiveLiteral = new ArrayList<>();
+//                while(howlingParsed.peek() != '('){
+//                    positiveLiteral.add(howlingParsed.pop());
+////                    System.out.println(positiveLiteral);
+////                    System.out.println(howlingParsed);
+//                }
+//                positiveLiteral.add(howlingParsed.pop());
+//                Collections.reverse(positiveLiteral);
+//                System.out.println(positiveLiteral);
+//                System.out.println(howlingParsed);
+//                String PLString = new usefullFunctions().getStringRepresentation(positiveLiteral);
+//                System.out.println(PLString);
+//
+//            }
+//            start++;
+//        }
+
+
+// Standard set of braces.
+    private static final String openBraces = "({[<";
+    // Matching close set.
+    private static final String closeBraces = ")}]>";
+
+    public static ArrayList<String> split(String s) {
+        // Default to splitting with my standard set of braces.
+        return split(s, openBraces, closeBraces);
+    }
+
+    // Holds the start of an element and which brace started it.
+    private static class Start {
+        // The brace number from the braces string in use.
+        final int brace;
+        // The position in the string it was seen.
+        final int pos;
+
+        // Constructor.
+        public Start(int brace, int pos) {
+            this.brace = brace;
+            this.pos = pos;
+        }
+
+        @Override
+        public String toString() {
+            return "{"+openBraces.charAt(brace)+","+pos+"}";
+        }
+    }
+
+    public static ArrayList<String> split(String s, String open, String close) {
+        // The splits.
+        ArrayList<String> split = new ArrayList<String>();
+        // The stack.
+        ArrayList<Start> stack = new ArrayList<Start>();
+        // Walk the string.
+        for (int i = 0; i < s.length(); i++) {
+            // Get the char there.
+            char ch = s.charAt(i);
+            // Is it an open brace?
+            int o = open.indexOf(ch);
+            // Is it a close brace?
+            int c = close.indexOf(ch);
+            if (o >= 0) {
+                // Its an open! Push it.
+                stack.add(new Start(o, i));
+            } else if ( c >= 0 && stack.size() > 0 ) {
+                // Pop (if matches).
+                int tosPos = stack.size() - 1;
+                Start tos = stack.get(tosPos);
+                // Does the brace match?
+                if ( tos.brace == c) {
+                    // Matches!
+                    split.add(s.substring(tos.pos, i+1));
+                    // Done with that one.
+                    stack.remove(tosPos);
+                }
+            }
+        }
+        return split;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        String input = "{(A | B), (A -> P), (B -> Q)} : (P | Q)";
+//        char first = input.charAt(0);
+//        ArrayList<String> givenClauses = new ArrayList<String>();
+//        if( first == '{' ){
+//            String inputParsed = input.substring(1);
+//            //System.out.println(inputParsed);
+//            String[] stringSplice = inputParsed.split("}");
+//            //System.out.println(Arrays.toString(stringSplice));
+//            for(int i =0;i<stringSplice.length;i++){
+//                givenClauses.add(stringSplice[i]);
+//            }
+//            givenClauses.remove(stringSplice.length-1);
+//            System.out.println("Clauses "+givenClauses);
+//            boolean containsConclusion = stringSplice[stringSplice.length-1].contains(":");
+//            if(containsConclusion){
+//                String conclusionNoFormat = stringSplice[stringSplice.length-1];
+//                String conclusionFormatted = conclusionNoFormat.substring((conclusionNoFormat.indexOf(":"))+1);
+//                System.out.println("Conclusion "+conclusionFormatted);
+//            }
+//            for(int i=0; i< givenClauses.size();i++) {
+//                String clause = givenClauses.get(i);
+//                int it = 0;
+//                int j = 0;
+//                int k =0 ;
+//                Pattern literals = Pattern.compile("[A-Z]+[0-9]*");
+//                Matcher matcher = literals.matcher(clause.substring(i));
+//
+//                while(i<clause.length()){
+//                    if(clause.charAt(i) == ' '){
+//                        it++;
+//                    }else if(clause.charAt(i) == '(' ){
+//                        j=it;
+//                        it++;
+//                    }else if(true){
+//
+//                    }else if(clause.charAt(i) == ')' ){
+//                        k=it;
+//                    }else{
+//                        it++;
+//                    }
+//                }
+//            }
+//        }
+
+
+
+    public static String convertPcToList(String PcSyntax){
+        /*
+         * First I compile the Regular Expression \w+\(|\w+|[A-Z]|\)
+         * This RegEx will identify :
+         * 		1. Predicates
+         * 		2. Function
+         * 		3. Constants
+         * 		4. Variable
+         * you can find more information on what this RegEx is doing
+         * through visiting this web site : http://regexr.com/
+         * in the Expression section type : \w+\(|\w+|[A-Z]|\)
+         * in the Text section type : any PC Syntax
+         *
+         */
+        Pattern pattern = Pattern.compile("\\w+\\(|\\w+|[A-Z]|\\)");
+        /*
+         * This Matcher object will find all the matches in the passed String
+         * which is PcSyntax, through the compiled RegEx.
+         * And then put them in a group
+         */
+        Matcher matcher = pattern.matcher(PcSyntax);
+        /*
+         * Creating an object of Array List ,so I can save all the element
+         * I found in the matcher and then manipulate them
+         */
+        ArrayList<String> arrayList = new ArrayList<String>();
+        // Here I check if there is any matches or not
+        while(matcher.find()){
+            // Check to see if the whole group length isn't equal to Zero
+            if(matcher.group().length() != 0){
+                /*
+                 * Here in the first iteration of the loop it will add
+                 * the first element in the group to the arrayList
+                 * and then the second, third, ...etc
+                 */
+                arrayList.add(matcher.group());
+            }
+        }
+        String fullListSyntax = "";
+        /*
+         * This loop is the main thing
+         * What this loop will do is :
+         * First check if the element in the arrayList contains a "("
+         * which means this element either a predicate or a function
+         * it will remove the "(" and put it at the begging of the element
+         * otherwise it will add a space to it
+         * and then it will combine the full List Syntax together
+         */
+        for(int i = 0 ; i < arrayList.size() ; i++){
+            if(arrayList.get(i).contains("(")){
+                String temp = arrayList.get(i);
+                temp = temp.replace("(", " ");
+                temp = "(" + temp;
+                arrayList.set(i, temp);
+            }else{
+                String temp = arrayList.get(i);
+                temp = temp + " ";
+                arrayList.set(i, temp);
+            }
+            fullListSyntax = fullListSyntax + arrayList.get(i);
+        }
+        System.out.println("After convering from PC Syntax to LIST Syntax here is the result :");
+        System.out.println(fullListSyntax);
+        System.out.println("------------------------------");
+        return fullListSyntax;
+
+    }
+
+
+     System.out.println("sub lits" + sl);
+            // Create a stream to hold the output
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
+            // IMPORTANT: Save the old System.out!
+            PrintStream old = System.out;
+            // Tell Java to use your special stream
+            System.setOut(ps);
+
+            //String[] unifySet =  Unifier.unify(E1,E2);
+
+            //System.out.println("******" + Arrays.toString(unifySet) +"*************");
+            // Print some output: goes to your special stream
+            //System.out.println("Foofoofoo!");
+            // Put things back
+            System.out.flush();
+            System.setOut(old);
+
+
+            // Show what happened
+            //System.out.println("Here: " + baos.toString());
+            //baos.toStri   ng();
+
+            String  s = baos.toString();
+            String[]  array = s.split("\\n");
+           // System.out.println("::::::" + array[2]);
+
+
+
+public static String[] unify(String E1, String E2){
+
+
+        //this list below is for checking the types for expression 1 and expression 2
+        String [] list = {"list1", "list2"};
+        //this a list if no substitution works, then return empty to let user know
+        String [] emptyList = {"EMPTY", "EMPTY"};
+        //if nothing down below returns, then fail needs to outputted
+        String [] failList = {"FAIL", "FAIL"};
+
+        //now type as declared as an enum is declared, we set the different expression types
+        Type expresion1Type = null;
+        Type expression2Type = null;
+
+        // check the type of E1 by using pseudocode from unfify library
+
+        if(checkTypeSection == 1 && (!E1.contains("(") || !E1.contains(")") || !E2.contains("(") || !E2.contains(")"  ))){
+            try{
+                if(Character.isUpperCase(E1.charAt(0))){
+                    expresion1Type = Type.VARIABLE;
+                }else{
+                    expresion1Type = Type.CONSTANT;
+                }
+
+                if(Character.isUpperCase(E2.charAt(0))){
+                    expression2Type = Type.VARIABLE;
+                }else{
+                    expression2Type = Type.CONSTANT;
+                }
+            }catch(StringIndexOutOfBoundsException e){
+                e.getMessage();
+            }
+        }
+
+        if(expresion1Type == Type.CONSTANT && expression2Type == Type.CONSTANT && checkTypeSection == 1){
+            if(E1.equals(E2))
+                return emptyList;
+            else
+                return failList;
+        }else if(expresion1Type == Type.VARIABLE && checkTypeSection == 1){
+            if(E2.contains(E1))
+                return failList;
+            else{
+                // This will save E2 in index 0 and E1 in index 1
+                list[0] = E2;
+                list[1] = E1;
+                return list;
+            }
+        }else if(expression2Type == Type.VARIABLE && checkTypeSection == 1){
+            if(E1.contains(E2))
+                return failList;
+            else{
+                // HE2 = HE1;
+                list[0] = E1;
+                list[1] = E2;
+                return list;
+            }
+        }else if((E1.isEmpty() || E2.isEmpty()))
+            return failList;
+        else{
+            String firstIndexE1;
+            Type firstIndex1_E2Type;
+            boolean isFirstIndex_E1TypeFunction = false;
+            String firstIndexE2;
+            Type firstIndex1_E1Type;
+            boolean isFirstIndex_E2TypeFunction = false;
+            //this variable is very important to access type checking section of code (E1 and E2)
+            checkTypeSection = 1;
+            //this regex check for the the words in a sentence (matches any word character (alphanumeric and other))
+            Pattern findWordPattern = Pattern.compile("\\w+");
+
+            //expression1Match and expression2Match will search for the first match in E1 and E2
+            // the matches will be either a predicate, function, variable
+
+            Matcher expression1Match = findWordPattern.matcher(E1);
+            Matcher expression2Match = findWordPattern.matcher(E2);
+            if(expression1Match.find()) {
+                firstIndexE1 = expression1Match.group(0);
+            }
+            else {
+                return emptyList;
+            }
+
+            if(expression2Match.find()) {
+                firstIndexE2 = expression2Match.group(0);
+            }
+            else {
+                return emptyList;
+            }
+
+            // check the type of firstIndexE1 and firstIndexE2 if it is a variable, constant or function
+            if(Character.isUpperCase(firstIndexE1.charAt(0))){
+                firstIndex1_E2Type = Type.VARIABLE;
+            }else{
+                firstIndex1_E2Type = Type.CONSTANT;
+                // check if the constant is a function
+                try{
+                    if(E1.charAt(E1.indexOf(firstIndexE1)-1) == '('){
+                        isFirstIndex_E1TypeFunction = true;
+                    }
+                }catch(StringIndexOutOfBoundsException e){
+                    e.getMessage();
+                }
+            }
+
+            if(Character.isUpperCase(firstIndexE2.charAt(0))){
+                firstIndex1_E1Type = Type.VARIABLE;
+            }else{
+                firstIndex1_E1Type = Type.CONSTANT;
+                // check if the constant is a function
+                try{
+                    if(E2.charAt(E2.indexOf(firstIndexE2)-1) == '('){
+                        isFirstIndex_E2TypeFunction = true;
+                    }
+                }catch(StringIndexOutOfBoundsException e){
+                    e.getMessage();
+                }
+            }
+
+            String[] SUBS1;
+            String[] SUBS2 ;
+            String TE1; //apply to tail of expression one
+            String TE2; //apply to tail of expression 2
+
+            //this part is checking if the rest of expression is a variable or function
+            if(firstIndex1_E2Type == Type.VARIABLE && firstIndex1_E1Type == Type.CONSTANT && isFirstIndex_E2TypeFunction){
+                Pattern pattern = Pattern.compile("\\w+\\s+\\w+");
+                Matcher match = pattern.matcher(E2);
+                if(match.find()) {
+                    firstIndexE2 = match.group(0);
+                }
+                // remove firstIndexE1 and firstIndexE2 from E1 and E2
+                E1 = E1.replaceFirst(firstIndexE1, "");
+                E2 = E2.replaceFirst(firstIndexE2, "");
+                SUBS1 = unify(firstIndexE1,firstIndexE2);
+
+                if(SUBS1[0] == "FAIL") {
+                    return failList;
+                }
+                if(SUBS1[0] == "EMPTY") {
+                    checkTypeSection = 0;
+                }
+                TE1 = E1.replaceAll(SUBS1[1], SUBS1[0]);
+                TE2 = E2.replaceAll(SUBS1[1], SUBS1[0]);
+                SUBS2 = unify(TE1, TE2);
+
+                if(SUBS2[0] == "FAIL") {
+                    return failList;
+                } else{
+                    //  System.out.println("++++++++++++ Composition of SUBS1 & SUBS2 Process #" + (++process) +" ++++++++++++");
+                    System.out.println("{" + SUBS1[0] + "/" + SUBS1[1] + "}");
+                    System.out.println("{" + SUBS2[0] + "/" + SUBS2[1] + "}");
+                    //  System.out.println("++++++++++ End Composition of SUBS1 & SUBS2 Process #" + (process) +" ++++++++++");
+                }
+            } else if(firstIndex1_E2Type == Type.CONSTANT && firstIndex1_E1Type == Type.VARIABLE && isFirstIndex_E1TypeFunction){
+                Pattern ptn = Pattern.compile("\\w+\\s+\\w+");
+                Matcher mcr = ptn.matcher(E1);
+                if(mcr.find()) {
+                    firstIndexE1 = mcr.group(0);
+                }
+                // remove firstIndexE1 and firstIndexE2 from E1 and E2
+                E1 = E1.replaceFirst(firstIndexE1, "");
+                E2 = E2.replaceFirst(firstIndexE2, "");
+
+                SUBS1 = unify(firstIndexE1,firstIndexE2);
+                if(SUBS1[0] == "FAIL") {
+                    return failList;
+                }
+                if(SUBS1[0] == "EMPTY") {
+                    checkTypeSection = 0;
+                }
+
+                TE1 = E1.replaceAll(SUBS1[1], SUBS1[0]);
+                TE2 = E2.replaceAll(SUBS1[1], SUBS1[0]);
+                SUBS2 = unify(TE1, TE2);
+                if(SUBS2[0] == "FAIL") {
+                    return failList;
+                } else{
+                    // System.out.println("++++++++++++ Composition of SUBS1 & SUBS2 Process #" + (++process) +" ++++++++++++");
+                    System.out.println("{" + SUBS1[0] + "/" + SUBS1[1] + "}");
+                    System.out.println("{" + SUBS2[0] + "/" + SUBS2[1] + "}");
+                    // System.out.println("++++++++++ End Composition of SUBS1 & SUBS2 Process #" + (process) +" ++++++++++");
+                }
+            }else{
+                E1 = E1.replaceFirst(firstIndexE1, "");
+                E2 = E2.replaceFirst(firstIndexE2, "");
+                SUBS1 = unify(firstIndexE1,firstIndexE2);
+                if(SUBS1[0] == "FAIL") {
+                    return failList;
+                }
+                if(SUBS1[0] == "EMPTY") {
+                    checkTypeSection = 0;
+                }
+                TE1 = E1.replace(SUBS1[1], SUBS1[0]);
+                TE2 = E2.replace(SUBS1[1], SUBS1[0]);
+                SUBS2 = unify(TE1, TE2);
+                if(SUBS2[0] == "FAIL") {
+                    return failList;
+                }
+                else{
+                    // System.out.println("++++++++++++ Composition of SUBS1 & SUBS2 Process #" + (++process) +" ++++++++++++");
+                    System.out.println("{" + SUBS1[0] + "/" + SUBS1[1] + "}");
+                    System.out.println("{" + SUBS2[0] + "/" + SUBS2[1] + "}");
+                    // System.out.println("++++++++++ End Composition of SUBS1 & SUBS2 Process #" + (process) +" ++++++++++");
+
+                }
+            }
+        }
+        return emptyList;
+    }
+
+
+    public static ArrayList<String> substitutionSet(String Expression1, String Expression2){
+
+            //ArrayList<String> substitutionList = new ArrayList<>();
+
+            //this list below is for checking the types for expression 1 and expression 2
+            ArrayList<String> list = new ArrayList<>(Arrays.asList("list1", "list2") );
+            //String [] list = {"list1", "list2"};
+            //this a list if no substitution works, then return empty to let user know
+            ArrayList<String> emptyList = new ArrayList<>(Arrays.asList("EMPTY", "EMPTY") );
+            //String [] emptyList = {"EMPTY", "EMPTY"};
+            //if nothing down below returns, then fail needs to outputted
+            ArrayList<String> failList = new ArrayList<>(Arrays.asList("EMPTY", "EMPTY") );
+            //String [] failList = {"FAIL", "FAIL"};
+
+            //now type as declared as an enum is declared, we set the different expression types
+            Type expresion1Type = null;
+            Type expression2Type = null;
+
+            // check the type of Expression1 by using pseudocode from unfify library
+
+            if(checkTypeSection == 1 && (!Expression1.contains("(") || !Expression1.contains(")") || !Expression2.contains("(") || !Expression2.contains(")"  ))){
+                try{
+                    if(Character.isUpperCase(Expression1.charAt(0))){
+                        expresion1Type = Type.VARIABLE;
+                    }else{
+                        expresion1Type = Type.CONSTANT;
+                    }
+
+                    if(Character.isUpperCase(Expression2.charAt(0))){
+                        expression2Type = Type.VARIABLE;
+                    }else{
+                        expression2Type = Type.CONSTANT;
+                    }
+                }catch(StringIndexOutOfBoundsException e){
+                    e.getMessage();
+                }
+            }
+
+            if(expresion1Type == Type.CONSTANT && expression2Type == Type.CONSTANT && checkTypeSection == 1){
+                if(Expression1.equals(Expression2))
+                    return emptyList;
+                else
+                    return failList;
+            }else if(expresion1Type == Type.VARIABLE && checkTypeSection == 1){
+                if(Expression2.contains(Expression1))
+                    return failList;
+                else{
+                    // This will save Expression2 in index 0 and Expression1 in index 1
+                    list.set(0,Expression2);
+                    //list[0] = Expression2;
+                    list.set(1,Expression1);
+                    //list[1] = Expression1;
+                    return list;
+                }
+            }else if(expression2Type == Type.VARIABLE && checkTypeSection == 1){
+                if(Expression1.contains(Expression2))
+                    return failList;
+                else{
+                    // HE2 = HE1;
+                    list.set(0,Expression1);
+                    //list[0] = Expression1;
+                    list.set(1,Expression2);
+                    //list[1] = Expression2;
+                    return list;
+                }
+            }else if((Expression1.isEmpty() || Expression2.isEmpty()))
+                return failList;
+            else{
+                String firstIndexE1;
+                Type firstIndex1_E2Type;
+                boolean isFirstIndex_E1TypeFunction = false;
+                String firstIndexE2;
+                Type firstIndex1_E1Type;
+                boolean isFirstIndex_E2TypeFunction = false;
+                //this variable is very important to access type checking section of code (E1 and E2)
+                checkTypeSection = 1;
+                //this regex check for the the words in a sentence (matches any word character (alphanumeric and other))
+                Pattern findWordPattern = Pattern.compile("\\w+");
+
+                //expression1Match and expression2Match will search for the first match in Expression1 and Expression2
+                // the matches will be either a predicate, function, variable
+
+                Matcher expression1Match = findWordPattern.matcher(Expression1);
+                Matcher expression2Match = findWordPattern.matcher(Expression2);
+                if(expression1Match.find()) {
+                    firstIndexE1 = expression1Match.group(0);
+                }
+                else {
+                    return emptyList;
+                }
+
+                if(expression2Match.find()) {
+                    firstIndexE2 = expression2Match.group(0);
+                }
+                else {
+                    return emptyList;
+                }
+
+                // check the type of firstIndexE1 and firstIndexE2 if it is a variable, constant or function
+                if(Character.isUpperCase(firstIndexE1.charAt(0))){
+                    firstIndex1_E2Type = Type.VARIABLE;
+                }else{
+                    firstIndex1_E2Type = Type.CONSTANT;
+                    // check if the constant is a function
+                    try{
+                        if(Expression1.charAt(Expression1.indexOf(firstIndexE1)-1) == '('){
+                            isFirstIndex_E1TypeFunction = true;
+                        }
+                    }catch(StringIndexOutOfBoundsException e){
+                        e.getMessage();
+                    }
+                }
+
+                if(Character.isUpperCase(firstIndexE2.charAt(0))){
+                    firstIndex1_E1Type = Type.VARIABLE;
+                }else{
+                    firstIndex1_E1Type = Type.CONSTANT;
+                    // check if the constant is a function
+                    try{
+                        if(Expression2.charAt(Expression2.indexOf(firstIndexE2)-1) == '('){
+                            isFirstIndex_E2TypeFunction = true;
+                        }
+                    }catch(StringIndexOutOfBoundsException e){
+                        e.getMessage();
+                    }
+                }
+
+                ArrayList<String> SUBS1;
+                ArrayList<String> SUBS2 ;
+                String TE1; //apply to tail of expression one
+                String TE2; //apply to tail of expression 2
+
+                //this part is checking if the rest of expression is a variable or function
+                if(firstIndex1_E2Type == Type.VARIABLE && firstIndex1_E1Type == Type.CONSTANT && isFirstIndex_E2TypeFunction){
+                    Pattern pattern = Pattern.compile("\\w+\\s+\\w+");
+                    Matcher match = pattern.matcher(Expression2);
+                    if(match.find()) {
+                        firstIndexE2 = match.group(0);
+                    }
+                    // remove firstIndexE1 and firstIndexE2 from Expression1 and Expression2
+                    Expression1 = Expression1.replaceFirst(firstIndexE1, "");
+                    Expression2 = Expression2.replaceFirst(firstIndexE2, "");
+                    SUBS1 = substitutionSet(firstIndexE1,firstIndexE2);
+
+                    if(SUBS1.get(0)== "FAIL") {
+                        return failList;
+                    }
+                    if(SUBS1.get(0) == "EMPTY") {
+                        checkTypeSection = 0;
+                    }
+                    TE1 = Expression1.replaceAll(SUBS1.get(1), SUBS1.get(0));
+                    TE2 = Expression2.replaceAll(SUBS1.get(1), SUBS1.get(0));
+                    SUBS2 = substitutionSet(TE1, TE2);
+
+                    if(SUBS2.get(0) == "FAIL") {
+                        return failList;
+                    } else{
+                        //  System.out.println("++++++++++++ Composition of SUBS1 & SUBS2 Process #" + (++process) +" ++++++++++++");
+                        String sub1 = "{" + SUBS1.get(0) + "/" + SUBS1.get(1) + "}";
+                        //System.out.println(sub1);
+                        String sub2 = "{" + SUBS2.get(0) + "/" + SUBS2.get(1) + "}";
+                        //System.out.println(sub2);
+                        substitutionList.add(sub1);
+                        substitutionList.add(sub2);
+                        //  System.out.println("++++++++++ End Composition of SUBS1 & SUBS2 Process #" + (process) +" ++++++++++");
+                    }
+                } else if(firstIndex1_E2Type == Type.CONSTANT && firstIndex1_E1Type == Type.VARIABLE && isFirstIndex_E1TypeFunction){
+                    Pattern ptn = Pattern.compile("\\w+\\s+\\w+");
+                    Matcher mcr = ptn.matcher(Expression1);
+                    if(mcr.find()) {
+                        firstIndexE1 = mcr.group(0);
+                    }
+                    // remove firstIndexE1 and firstIndexE2 from Expression1 and Expression2
+                    Expression1 = Expression1.replaceFirst(firstIndexE1, "");
+                    Expression2 = Expression2.replaceFirst(firstIndexE2, "");
+
+                    SUBS1 = substitutionSet(firstIndexE1,firstIndexE2);
+                    if(SUBS1.get(0) == "FAIL") {
+                        return failList;
+                    }
+                    if(SUBS1.get(0) == "EMPTY") {
+                        checkTypeSection = 0;
+                    }
+
+                    TE1 = Expression1.replaceAll(SUBS1.get(1), SUBS1.get(0));
+                    TE2 = Expression2.replaceAll(SUBS1.get(1), SUBS1.get(0));
+                    SUBS2 = substitutionSet(TE1, TE2);
+                    if(SUBS2.get(0) == "FAIL") {
+                        return failList;
+                    } else{
+                        // System.out.println("++++++++++++ Composition of SUBS1 & SUBS2 Process #" + (++process) +" ++++++++++++");
+                        String sub1 = "{" + SUBS1.get(0) + "/" + SUBS1.get(1) + "}";
+                        //System.out.println(sub1);
+                        String sub2 = "{" + SUBS2.get(0) + "/" + SUBS2.get(1) + "}";
+                        //System.out.println(sub2);
+                        substitutionList.add(sub1);
+                        substitutionList.add(sub2);
+                        // System.out.println("++++++++++ End Composition of SUBS1 & SUBS2 Process #" + (process) +" ++++++++++");
+                    }
+                }else{
+                    Expression1 = Expression1.replaceFirst(firstIndexE1, "");
+                    Expression2 = Expression2.replaceFirst(firstIndexE2, "");
+                    SUBS1 = substitutionSet(firstIndexE1,firstIndexE2);
+                    if(SUBS1.get(0) == "FAIL") {
+                        return failList;
+                    }
+                    if(SUBS1.get(0) == "EMPTY") {
+                        checkTypeSection = 0;
+                    }
+                    TE1 = Expression1.replace(SUBS1.get(1), SUBS1.get(0));
+                    TE2 = Expression2.replace(SUBS1.get(1), SUBS1.get(0));
+                    SUBS2 = substitutionSet(TE1, TE2);
+                    if(SUBS2.get(0) == "FAIL") {
+                        return failList;
+                    }
+                    else{
+                        // System.out.println("++++++++++++ Composition of SUBS1 & SUBS2 Process #" + (++process) +" ++++++++++++");
+                        String sub1 = "{" + SUBS1.get(0) + "/" + SUBS1.get(1) + "}";
+                        //System.out.println(sub1);
+                        String sub2 = "{" + SUBS2.get(0) + "/" + SUBS2.get(1) + "}";
+                        //System.out.println(sub2);
+                        substitutionList.add(sub1);
+                        substitutionList.add(sub2);
+                        // System.out.println("++++++++++ End Composition of SUBS1 & SUBS2 Process #" + (process) +" ++++++++++");
+
+                    }
+                }
+            }
+            return substitutionList;
+        }
+
+
+
+
+Unifier u = new Unifier();
+        ArrayList<String> sl ;
+        u.unify(E1,E2);
+        System.out.println("This is the substitution list down below : \n" + u.substitutionList );
+
+        ArrayList<String> newSubList = removeELsubstitutionList(u.substitutionList);
+        System.out.println("This is the new and modified substitution list down below : \n" + newSubList );
+
+        for(int i = 0 ; i < newSubList.size();i++){
+            String[] newValue = newSubList.get(i).substring(1,newSubList.get(i).length()-1).split("\\/");
+            System.out.println(Arrays.toString(newValue));
+            String[] funcVar = newValue[0].split("\\s");
+            System.out.println("This is function variable splitted " + Arrays.toString(funcVar));
+            //String function1 = funcVar[0].trim();
+            //String function2 = funcVar[1].trim();
+            //Pattern r= Pattern.compile(function1 + "\\s" + function2);
+            Pattern r= Pattern.compile("\\w+\\s\\w+");
+            Matcher m = r.matcher(newValue[0].trim());
+            System.out.println("new value:"+newValue[0].trim() + "," + newValue[1].trim());
+
+            if(m.find()){
+                System.out.println(m.group(0));
+                String newE1 = E1.replace("("+m.group(0)+")",newValue[1].trim());
+                System.out.println("Function" + newE1);
+                E1= newE1;
+            }else {
+                if(E1.contains(newValue[0].trim())){
+                    String newE1 = E1.replace(newValue[0].trim(), newValue[1].trim());
+                    System.out.println("Not function " + newE1);
+                    E1= newE1;
+                }else {
+                    System.out.println("This substitution pair can't be applied "+ newSubList.get(i));
+                    String[] newValue1 = newSubList.get(i).substring(1,newSubList.get(i).length()-1).split("\\/");
+                    System.out.println(Arrays.toString(newValue1));
+
+                    Pattern r1= Pattern.compile("[f]\\s[a]");
+                    Matcher m1 = r.matcher(newValue[1].trim());
+                    System.out.println("new value:"+newValue[1].trim() + "," + newValue[0].trim());
+
+                    if(m.find()){
+                        System.out.println(m.group(0));
+                        String newE1 = E1.replace(newValue[1].trim(),"("+m.group(0)+")");
+                        System.out.println("Function" + newE1);
+                        E1= newE1;
+                    }else {
+                        if(E1.contains(newValue[1].trim())){
+                            String newE1 = E1.replace(newValue[1].trim(), newValue[0].trim());
+                            System.out.println("Not function " + newE1);
+                            E1= newE1;
+                        }else {
+                            System.out.println("This shouldn't be here "+ newSubList.get(i));
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("The current Substitution both ways is : " + E1);
+        System.out.println("The length of substitution list is " + newSubList.size() );
+        System.out.println("***88888888888888888888888888888888888888888888888888888888888");
+
+
+
+
+
+
+
+
+
